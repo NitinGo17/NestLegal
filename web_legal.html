@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nestlegal | Strategic Legal Architecture</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
+
+    <style>
+        :root {
+            --deep-green: #0a1f19;
+            --emerald: #0f2d24;
+            --gold: #c9a24d;
+            --gold-light: #e5be6b;
+            --white: #ffffff;
+            --text-dim: rgba(255, 255, 255, 0.7);
+            --ease: cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+@media (min-width: 769px) {
+  * { cursor: none; }
+}
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: var(--deep-green); 
+            color: var(--white); 
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* --- Custom Cursor --- */
+        #cursor { position: fixed; width: 8px; height: 8px; background: var(--gold); border-radius: 50%; pointer-events: none; z-index: 10000; }
+        #cursor-f { position: fixed; width: 35px; height: 35px; border: 1px solid var(--gold); border-radius: 50%; pointer-events: none; z-index: 9999; transition: transform 0.2s; }
+
+        /* --- Header & Navigation --- */
+        header {
+            position: fixed; top: 0; width: 100%; padding: 2rem 5%;
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 1000; transition: 0.5s var(--ease);
+        }
+        header.scrolled { padding: 1rem 5%; background: rgba(10, 31, 25, 0.95); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(201, 162, 77, 0.2); }
+
+        .logo { 
+            font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 700; 
+            color: var(--gold); text-decoration: none; position: relative;
+            transition: 0.3s;
+        }
+        .logo:hover { text-shadow: 0 0 15px var(--gold); transform: scale(1.05); }
+
+        nav { display: flex; gap: 2rem; align-items: center; }
+        nav a {
+            color: var(--white); text-decoration: none; font-size: 0.75rem;
+            text-transform: uppercase; letter-spacing: 2px; opacity: 0.6;
+            transition: 0.4s; position: relative;
+        }
+        nav a:hover { opacity: 1; color: var(--gold); }
+        nav a::after {
+            content: ''; position: absolute; bottom: -5px; left: 0; width: 0;
+            height: 1px; background: var(--gold); transition: 0.4s var(--ease);
+        }
+        nav a:hover::after { width: 100%; }
+
+        /* --- Hero Section --- */
+        .hero { height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: 0 10%; background: linear-gradient(rgba(10,31,25,0.7), rgba(10,31,25,0.7)), url('https://images.unsplash.com/photo-1505664194779-8beaceb93744?auto=format&fit=crop&q=80') center/cover; }
+        .hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(1.6rem, 4.5vw, 3.8rem);; margin-bottom: 1.5rem; }
+        .typing-container { font-size: 1.2rem; color: var(--gold); min-height: 1.5em; max-width: 700px; }
+
+        /* --- Sections --- */
+        section { padding: 8rem 10%; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .section-title { font-family: 'Playfair Display', serif; font-size: 3rem; margin-bottom: 3rem; color: var(--gold); }
+        
+        /* --- Grid Layouts --- */
+        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; }
+        .service-card { background: rgba(255,255,255,0.03); padding: 2.5rem; border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; transition: 0.4s; }
+        .service-card:hover { border-color: var(--gold); transform: translateY(-10px); background: var(--emerald); }
+
+        .stat-box { text-align: center; }
+        .stat-number { font-size: 3.5rem; font-weight: 700; color: var(--gold); display: block; }
+
+        /* --- Form --- */
+        .form-container { background: var(--emerald); padding: 4rem; border-radius: 20px; border: 1px solid var(--gold); }
+        input, select, textarea { width: 100%; padding: 1rem; margin-bottom: 1rem; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); color: white; border-radius: 5px; }
+        .btn-gold { padding: 1rem 2.5rem; background: var(--gold); border: none; font-weight: 700; color: var(--deep-green); cursor: pointer; border-radius: 50px; transition: 0.3s; }
+        .btn-gold:hover { background: var(--gold-light); transform: scale(1.05); }
+
+        /* --- FAQ Accordion --- */
+        .faq-item { border-bottom: 1px solid rgba(201, 162, 77, 0.2); padding: 1.5rem 0; cursor: pointer; }
+        .faq-question { display: flex; justify-content: space-between; font-weight: 600; font-size: 1.1rem; }
+        .faq-answer { max-height: 0; overflow: hidden; transition: 0.5s var(--ease); opacity: 0; padding-top: 0; }
+        .faq-item.active .faq-answer { max-height: 200px; opacity: 1; padding-top: 1rem; color: var(--text-dim); }
+        .faq-item.active .plus { transform: rotate(45deg); }
+        .plus { transition: 0.3s; color: var(--gold); font-size: 1.5rem; }
+
+        /* --- Public Blog Section --- */
+        .blog-section { padding: 8rem 10%; position: relative; }
+        .blog-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 4rem; border-bottom: 1px solid rgba(201,162,77,0.2); padding-bottom: 2rem; }
+        .section-title { font-family: 'Playfair Display', serif; font-size: 3rem; color: var(--gold); }
+
+        .blog-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 2.5rem; }
+
+        /* --- Luxury Blog Cards --- */
+        .blog-card { 
+            background: linear-gradient(145deg, rgba(255,255,255,0.01), rgba(255,255,255,0.04));
+            border: 1px solid rgba(255,255,255,0.08); padding: 2.5rem; border-radius: 4px;
+            position: relative; transition: 0.5s var(--ease); overflow: hidden;
+        }
+        .blog-card:hover { border-color: var(--gold); transform: translateY(-10px); background: rgba(255,255,255,0.06); }
+        .blog-card::before { content: "LEGAL BRIEF"; position: absolute; top: 15px; right: 15px; font-size: 0.6rem; letter-spacing: 2px; opacity: 0.3; }
+        
+        .card-cat { color: var(--gold); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 1rem; display: block; }
+        .card-title { font-family: 'Playfair Display', serif; font-size: 1.6rem; margin-bottom: 1.2rem; line-height: 1.3; }
+        .card-link { display: inline-block; margin-top: 1.5rem; color: var(--gold); text-decoration: none; font-size: 0.8rem; font-weight: 600; border-bottom: 1px solid transparent; transition: 0.3s; }
+        .card-link:hover { border-bottom: 1px solid var(--gold); }
+
+        /* --- The Vault Admin System --- */
+        #vault-overlay {
+            position: fixed; inset: 0; background: rgba(10, 31, 25, 0.98);
+            backdrop-filter: blur(20px); z-index: 9999; display: none;
+            justify-content: center; align-items: center; padding: 20px;
+        }
+
+        .vault-container { width: 100%; max-width: 550px; text-align: center; }
+        .vault-step { display: none; }
+        .vault-step.active { display: block; animation: fadeIn 0.5s var(--ease); }
+
+
+        /* --- Testimonial Slider --- */
+        .t-slider { overflow: hidden; position: relative; padding: 2rem 0; }
+        .t-track { display: flex; gap: 2rem; width: max-content; animation: scroll 40s linear infinite; }
+        .t-card { width: 400px; background: var(--emerald); padding: 2.5rem; border-radius: 15px; border-left: 4px solid var(--gold); }
+        @keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+            /* --- Magnetic CTA Button --- */
+    .btn-wrap { position: relative; }
+    .magnetic-btn {
+      padding: 0.8rem 2rem; background: var(--gold); color: var(--deep-green);
+      border: none; border-radius: 50px; font-weight: 600; font-size: 0.9rem;
+      box-shadow: 0 10px 20px var(--gold-glow); transition: transform 0.2s;
+    }
+
+    .admin-trigger { 
+    background: transparent; 
+    border: 1px solid var(--gold); 
+    color: var(--gold); 
+    padding: 12px 24px; 
+    font-size: 0.7rem; 
+    cursor: pointer; 
+    letter-spacing: 2px; 
+    transition: all 0.4s var(--ease);
+    position: relative;
+    overflow: hidden;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+/* The "Glow" behind the button */
+.admin-trigger:hover { 
+    background: var(--gold); 
+    color: var(--deep-green); 
+    box-shadow: 0 0 20px var(--gold);
+    transform: translateY(-2px);
+}
+
+/* A subtle scan-line effect that runs across the button */
+.admin-trigger::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -60%;
+    width: 20%;
+    height: 200%;
+    background: rgba(255, 255, 255, 0.2);
+    transform: rotate(30deg);
+    transition: none;
+}
+
+.admin-trigger:hover::after {
+    left: 120%;
+    transition: all 0.6s var(--ease);
+}
+
+        /* --- Map --- */
+        .map-wrapper { height: 450px; border-radius: 20px; overflow: hidden; border: 1px solid var(--gold); margin-top: 4rem; }
+
+        /* --- Mobile --- */
+        @media (max-width: 768px) { nav { display: none; } section { padding: 5rem 5%; } }
+        @media (max-width: 768px) { .blog-section { padding: 5rem 5%; } .blog-header { flex-direction: column; align-items: flex-start; gap: 1rem; } }
+
+        /* ================= GALLERY ================= */
+
+.gallery-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:1.2rem;
+}
+
+.gallery-grid img{
+  width:100%;
+  height:220px;
+  object-fit:cover;
+  border-radius:14px;
+  cursor:pointer;
+  filter:brightness(.85);
+  transition:.4s ease;
+  border:1px solid rgba(255,255,255,.08);
+}
+
+.gallery-grid img:hover{
+  filter:brightness(1);
+  transform:scale(1.03);
+  border-color:var(--gold);
+}
+
+/* ================= LIGHTBOX ================= */
+
+#lightbox{
+  position:fixed;
+  inset:0;
+  background:rgba(10,31,25,.95);
+  backdrop-filter:blur(10px);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:99999;
+}
+
+#lightbox img{
+  max-width:90%;
+  max-height:85vh;
+  border-radius:16px;
+  border:2px solid var(--gold);
+}
+
+#close-lightbox{
+  position:absolute;
+  top:30px;
+  right:40px;
+  font-size:2.5rem;
+  color:var(--gold);
+  cursor:pointer;
+}
+
+/* Mobile tuning */
+@media(max-width:768px){
+  .gallery-grid img{
+    height:180px;
+  }
+}
+
+@media (max-width: 768px) {
+  .t-track {
+    animation: none;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+  }
+
+  .t-card {
+    min-width: 85%;
+    scroll-snap-align: start;
+  }
+}
+
+@media (max-width: 768px) {
+  #lightbox img {
+    max-width: 95%;
+    max-height: 70vh;
+  }
+
+  #close-lightbox {
+    top: 15px;
+    right: 20px;
+  }
+}@media (max-width: 768px) {
+  .hero h1 {
+    font-size: 1.8rem;
+    line-height: 1.35;
+  }
+
+  .section-title {
+    font-size: 2.1rem;
+  }
+
+  p {
+    font-size: 0.95rem;
+  }
+}
+
+/* ===== CONTACT SECTION MOBILE FIX ===== */
+@media (max-width: 768px) {
+
+  #contact > div {
+    display: flex !important;
+    flex-direction: column;
+    gap: 2.5rem;
+  }
+
+  /* Form container fix */
+  .form-container {
+    padding: 2.5rem 1.8rem;
+    border-radius: 18px;
+  }
+
+  /* Map container fix */
+  .map-wrapper {
+    height: 320px;
+    margin-top: 0;
+  }
+
+  /* Headings spacing */
+  #contact .section-title {
+    margin-bottom: 1.2rem;
+  }
+
+}
+@media (max-width: 768px) {
+  .form-container {
+    box-shadow: 0 20px 40px rgba(0,0,0,0.35);
+  }
+}
+
+/* ================= FOOTER ================= */
+
+.site-footer {
+  background: linear-gradient(180deg, #081a15, #061410);
+  border-top: 1px solid rgba(201,162,77,0.2);
+  padding: 4rem 8%;
+}
+
+.footer-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 2.5rem;
+  align-items: center;
+}
+
+.footer-logo {
+  font-family: 'Playfair Display', serif;
+  color: var(--gold);
+  font-size: 1.6rem;
+  margin-bottom: 1rem;
+}
+
+.footer-block h4 {
+  color: var(--gold);
+  margin-bottom: 0.8rem;
+  font-size: 1rem;
+}
+
+.footer-text {
+  color: var(--text-dim);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.footer-text a {
+  color: var(--gold);
+  text-decoration: none;
+}
+
+.footer-text a:hover {
+  text-decoration: underline;
+}
+
+/* WhatsApp Button */
+.whatsapp-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.9rem 1.6rem;
+  background: #25D366;
+  color: #0a1f19;
+  font-weight: 700;
+  border-radius: 50px;
+  text-decoration: none;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 10px 25px rgba(37,211,102,0.35);
+}
+
+.whatsapp-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 35px rgba(37,211,102,0.5);
+}
+
+/* Footer Bottom */
+.footer-bottom {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  text-align: center;
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.5);
+}
+
+/* Mobile Optimization */
+@media (max-width: 768px) {
+  .site-footer {
+    padding: 3rem 6%;
+    text-align: center;
+  }
+
+  .footer-container {
+    gap: 2rem;
+  }
+
+  .whatsapp-btn {
+    justify-content: center;
+    width: 100%;
+  }
+}
+
+/* ========== FLOATING WHATSAPP BUTTON ========== */
+
+.floating-whatsapp {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  width: 58px;
+  height: 58px;
+  background: #25D366;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  z-index: 9999;
+  box-shadow: 0 12px 30px rgba(37, 211, 102, 0.45);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.floating-whatsapp:hover {
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 0 18px 45px rgba(37, 211, 102, 0.6);
+}
+
+.wa-icon {
+  font-size: 1.8rem;
+  color: #0a1f19;
+}
+
+/* Mobile fine-tuning */
+@media (max-width: 768px) {
+  .floating-whatsapp {
+    width: 52px;
+    height: 52px;
+    right: 16px;
+    bottom: 16px;
+  }
+}
+@keyframes wa-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(37,211,102,0.5); }
+  70% { box-shadow: 0 0 0 15px rgba(37,211,102,0); }
+  100% { box-shadow: 0 0 0 0 rgba(37,211,102,0); }
+}
+
+.floating-whatsapp {
+  animation: wa-pulse 3.5s infinite;
+}
+
+
+    </style>
+</head>
+<body>
+
+    <div id="cursor"></div>
+    <div id="cursor-f"></div>
+
+    <header id="header">
+        <a href="#" class="logo">NESTLEGAL</a>
+        <nav>
+            <a href="#about">About</a>
+            <a href="#services">Services</a>
+            <a href="#why-choose-us">Why Us</a>
+            <a href="#testimonials">Testimonials</a>
+            <a href="#contact">Contact</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <h1>Justice is not just about the law; it’s about restoring the balance in your life.</h1>
+            <div class="typing-container">
+                <span id="typed"></span>
+            </div>
+            <div style="margin-top: 3rem;">
+                <button class="btn-gold" onclick="document.getElementById('contact').scrollIntoView()">Book Consultation</button>
+            </div>
+        </section>
+
+        <section id="about">
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center;">
+                <div>
+                    <h2 class="section-title">10+ Years Of Experience</h2>
+                    <p style="font-size: 1.2rem; color: var(--text-dim); margin-bottom: 2rem;">We understand that behind every case file is a human story — a family seeking harmony, an individual seeking justice, or an entrepreneur seeking a secure future. Our years of experience allow us to navigate the complexities of the Indian legal system with precision and compassion.</p>
+                    <div style="display:flex; gap: 3rem;">
+                        <div class="stat-box"><span class="stat-number">210+</span><small>Business Allies</small></div>
+                        <div class="stat-box"><span class="stat-number">190+</span><small>Cases Won</small></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="services">
+            <h2 class="section-title">Our Service Areas</h2>
+            <div class="grid-3">
+                <div class="service-card"><h3>Matrimonial Issues</h3><p>Handling divorce, maintenance, child custody, and domestic matters with the sensitivity they deserve.</p></div>
+                <div class="service-card"><h3>NRI Legal Services</h3><p>Specialized assistance for our clients abroad, handling property management, power of attorney, and legal documentation in India.</p></div>
+                <div class="service-card"><h3>Criminal Defense & Bail</h3><p>From District to the High Court, we provide robust representation for anticipatory and regular bail matters.</p></div>
+                <div class="service-card"><h3>Civil Litigation & Property Disputes</h3><p>Protecting your ancestral or purchased property and resolving complex land disputes.</p></div>
+                <div class="service-card"><h3>NRI Legal Services</h3><p>Specialized assistance for our clients abroad, handling property management, power of attorney, and legal documentation in India.</p></div>
+                <div class="service-card"><h3>Corporate & Commercial Law</h3><p>Crafting contracts, ensuring compliance, and navigating the business landscape of West Bengal.</p></div>
+                <div class="service-card"><h3>Consumer Protection</h3><p>Fighting for your rights in the Consumer Forum against unfair trade practices and service deficiencies.</p></div>
+                <div class="service-card"><h3>Deed Registration & Conveyance</h3><p>Meticulous drafting and registration of Sale Deeds, Gift Deeds, and Trust Deeds to secure your future.</p></div>
+            </div>
+        </section>
+
+        <section id="why-choose-us">
+            <h2 class="section-title">Why Choose Us</h2>
+            <div class="grid-3">
+                <div class="service-card"><span>⚖️</span><h4>Experienced Lawyers</h4><p>Seasoned professionals with deep industry knowledge.</p></div>
+                <div class="service-card"><span>🤝</span><h4>Client-Focused</h4><p>Your goals guide every legal strategy we build.</p></div>
+                <div class="service-card"><span>💬</span><h4>Clear Advice</h4><p>Transparent advice with no legal jargon confusion.</p></div>
+                <div class="service-card"><span>⏰</span><h4>24/7 Support</h4><p>Available whenever urgent guidance is needed.</p></div>
+                <div class="service-card"><span>💻</span><h4>Tech-Driven</h4><p>Smart digital tools for faster, efficient outcomes.</p></div>
+                <div class="service-card"><span>💳</span><h4>Flexible Plans</h4><p>Solutions designed around your budget.</p></div>
+            </div>
+        </section>
+
+        <section id="testimonials" style="background: rgba(255,255,255,0.02)">
+            <h2 class="section-title">What Our Clients Say</h2>
+            <div class="t-slider">
+                <div class="t-track">
+                    <div class="t-card">"Nestlegal provided unmatched clarity in a complex NRI property dispute. Their tech tools made remote coordination seamless."<br><br><strong>- Arjun V., Dubai</strong></div>
+                    <div class="t-card">"The best matrimonial counsel in the city. Professional, empathetic, and extremely strategic."<br><br><strong>- Sarah M., Entrepreneur</strong></div>
+                    <div class="t-card">"Cyber fraud recovery seemed impossible until I met this team. Their digital forensics are world-class."<br><br><strong>- Tech Corp CEO</strong></div>
+                    <div class="t-card">"Nestlegal provided unmatched clarity in a complex NRI property dispute."<br><br><strong>- Arjun V., Dubai</strong></div>
+                    <div class="t-card">"The best matrimonial counsel in the city."<br><br><strong>- Sarah M., Entrepreneur</strong></div>
+                    <div class="t-card">"Cyber fraud recovery seemed impossible."<br><br><strong>- Tech Corp CEO</strong></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="faq">
+            <h2 class="section-title">Frequently Asked Questions</h2>
+            <div style="max-width: 800px;">
+                <div class="faq-item" onclick="toggleFaq(this)">
+                    <div class="faq-question">How do you handle NRI cases remotely? <span class="plus">+</span></div>
+                    <div class="faq-answer">We use secure digital portals and video conferencing to manage all filings and strategy sessions globally without requiring your physical presence.</div>
+                </div>
+                <div class="faq-item" onclick="toggleFaq(this)">
+                    <div class="faq-question">What are your consultation charges? <span class="plus">+</span></div>
+                    <div class="faq-answer">Initial briefings are scheduled after a preliminary conflict check. We offer both fixed-fee and flexible payment plans tailored to the matter complexity.</div>
+                </div>
+                <div class="faq-item" onclick="toggleFaq(this)">
+                    <div class="faq-question">Are digital communications secure? <span class="plus">+</span></div>
+                    <div class="faq-answer">Yes, we utilize enterprise-grade encryption for all client data and case-related transmissions.</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="blog-section">
+       <section class="blog-section">
+        <div class="blog-header">
+            <div>
+                <h2 class="section-title">Latest Blogs</h2>
+                <p style="opacity: 0.6; margin-top: 0.5rem;">Strategic insights and digital legal advisories.</p>
+            </div>
+            <button class="admin-trigger" onclick="openVault()">AUTHORIZE ACCESS +</button>
+        </div>
+
+        <div id="blog-grid" class="blog-grid">
+            </div>
+    </section>
+
+    <div id="vault-overlay">
+        <div class="vault-container">
+            <button onclick="closeVault()" style="background:none; border:none; color:white; margin-bottom: 2rem; cursor:pointer; opacity:0.5;">[ CLOSE VAULT ]</button>
+            
+            <div id="step-auth" class="vault-step active">
+                <h2 style="font-family: 'Playfair Display'; margin-bottom: 2rem;">Authentication Required</h2>
+                <p style="margin-bottom: 2rem; opacity: 0.6;">Enter counsel credentials to publish new legal briefings.</p>
+                <input type="password" id="vault-pass" placeholder="Enter Access Code">
+                <div id="auth-error" class="error-msg">INVALID ACCESS CODE</div>
+                <button class="btn-gold" onclick="verifyPass()">Authorize</button>
+            </div>
+
+            <div id="step-publish" class="vault-step">
+                <h2 style="font-family: 'Playfair Display'; margin-bottom: 2rem;">Publish Insight</h2>
+                <form id="insight-form">
+                    <input type="text" id="post-title" placeholder="Briefing Title" required>
+                    <select id="post-cat">
+                        <option value="Cyber Fraud">Cyber Fraud</option>
+                        <option value="NRI Desk">NRI Desk</option>
+                        <option value="Corporate M&A">Corporate M&A</option>
+                        <option value="Matrimonial">Matrimonial</option>
+                    </select>
+                    <textarea id="post-data" rows="4" placeholder="Paste Link (Word Doc / Website) or Written Insight" required></textarea>
+                    <button type="submit" class="btn-gold">Broadcast to Public Grid</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <section id="gallery">
+  <h2 class="section-title">Our Gallery</h2>
+  <p class="dim" style="max-width:700px;margin-bottom:3rem;">
+    A glimpse into our professional environment, legal milestones, client interactions,
+    and the values that define NestLegal.
+  </p>
+
+  <div class="gallery-grid">
+    <!-- Replace src paths with your real images -->
+    <img src="p1.jpeg" alt="NestLegal Office">
+    <img src="p2.jpeg" alt="Legal Consultation">
+    <img src="p3.jpeg" alt="Court Appearance">
+    <img src="p4.jpeg" alt="Client Meeting">
+    <img src="p5.jpeg" alt="Documentation Work">
+    <img src="p6.jpeg" alt="Law Books & Research">
+    <img src="p7.jpeg" alt="Team Discussion">
+    <img src="p8.jpeg" alt="Case Strategy Session">
+    <img src="p9.jpeg" alt="Professional Workspace">
+    <img src="p10.jpeg" alt="NestLegal Office Interior">
+  </div>
+</section>
+
+<!-- Lightbox -->
+<div id="lightbox">
+  <span id="close-lightbox">×</span>
+  <img id="lightbox-img">
+</div>
+
+
+        <section id="contact">
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 4rem;">
+                <div class="form-container">
+                    <h2 style="margin-bottom:2rem; font-family:'Playfair Display'">Schedule a Consultation</h2>
+                    <form>
+                        <input type="text" placeholder="Full Name" required>
+                        <input type="email" placeholder="Email Address" required>
+                        <select>
+                            <option>Select Service Area</option>
+                            <option>Matrimonial</option>
+                            <option>NRI Services</option>
+                            <option>Cyber Fraud</option>
+                        </select>
+                        <textarea rows="4" placeholder="Brief Summary of Matter"></textarea>
+                        <button type="submit" class="btn-gold" style="width:100%">Submit Inquiry</button>
+                    </form>
+                </div>
+                <div>
+                    <h2 class="section-title">Our Headquarters</h2>
+                    <p style="margin-bottom:2rem">Visit us for a face-to-face consultation. We are located in the heart of the legal district.</p>
+                    <div class="map-wrapper">
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3151.835434505955!2d144.95373531531615!3d-37.81627977975124!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6ad65d4c2b349649%3A0xb6899234e561db11!2sEnvato!5e0!3m2!1sen!2sau!4v1531715135588" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Cursor Follower
+        const isMobile = window.matchMedia("(max-width: 768px)").matches;
+
+if (!isMobile) {
+    const cur = document.getElementById('cursor');
+    const curF = document.getElementById('cursor-f');
+
+    document.addEventListener('mousemove', (e) => {
+        gsap.to(cur, { x: e.clientX, y: e.clientY, duration: 0.1 });
+        gsap.to(curF, { x: e.clientX - 17, y: e.clientY - 17, duration: 0.3 });
+    });
+
+    document.querySelectorAll('a, button, .service-card').forEach(el => {
+        el.onmouseenter = () => curF.style.transform = 'scale(1.8)';
+        el.onmouseleave = () => curF.style.transform = 'scale(1)';
+    });
+} else {
+    document.getElementById('cursor').style.display = 'none';
+    document.getElementById('cursor-f').style.display = 'none';
+}
+
+
+        // Typing Animation
+        if (!isMobile) {
+    new Typed('#typed', {
+        strings: [
+          "When legal challenges arise, it often feels like the ground is shifting beneath your feet. At NestLegal, we provide clarity, protection, and calm in the midst of legal uncertainty."
+        ],
+        typeSpeed: 5,
+        showCursor: true
+    });
+} else {
+    document.getElementById('typed').innerText =
+      "A safe legal sanctuary where your rights are protected and your voice is heard.";
+}
+
+        // Hover Effects Scale
+        document.querySelectorAll('a, button, .service-card').forEach(el => {
+            el.onmouseenter = () => curF.style.transform = 'scale(1.8)';
+            el.onmouseleave = () => curF.style.transform = 'scale(1)';
+        });
+
+        // Header Scroll
+        window.addEventListener('scroll', () => {
+            if(window.scrollY > 50) document.getElementById('header').classList.add('scrolled');
+            else document.getElementById('header').classList.remove('scrolled');
+        });
+
+        // Entrance Animations
+       if (!isMobile) {
+    gsap.utils.toArray('section').forEach(sec => {
+        gsap.from(sec, {
+            scrollTrigger: { trigger: sec, start: "top 80%" },
+            opacity: 0,
+            y: 50,
+            duration: 1,
+            ease: "power3.out"
+        });
+    });
+}
+
+        function toggleFaq(el) {
+            const isActive = el.classList.contains('active');
+            document.querySelectorAll('.faq-item').forEach(item => item.classList.remove('active'));
+            if (!isActive) el.classList.add('active');
+        }
+
+       // CONFIGURATION
+const VAULT_CODE = "NEST2026"; // Change this to your desired password
+
+// ADMIN STATE
+let isAdmin = false;
+
+// DATABASE (Local Storage)
+let legalInsights = JSON.parse(localStorage.getItem('nest_insights')) || [
+    { title: "Managing Dual-Citizenship Property Assets", cat: "NRI Desk", data: "https://medium.com", date: "FEB 06" },
+    { title: "AI and The Future of Litigation Strategy", cat: "Cyber Fraud", data: "Digital forensics are now standard in high-stakes...", date: "FEB 05" }
+];
+
+// RENDER LOGIC
+function renderInsights() {
+    const grid = document.getElementById('blog-grid');
+    grid.innerHTML = '';
+
+    legalInsights.forEach((post, index) => {
+        const isLink = post.data.startsWith('http');
+        const card = document.createElement('div');
+        card.className = 'blog-card';
+
+        // DELETE BUTTON ONLY FOR ADMIN
+        const deleteBtn = isAdmin
+            ? `<button onclick="deleteEntry(${index})"
+                style="position:absolute; bottom:15px; right:15px;
+                background:none; border:none; color:var(--gold);
+                font-size:0.6rem; cursor:pointer; opacity:0.4;
+                font-weight:700;">[ DELETE ]</button>`
+            : '';
+
+        card.innerHTML = `
+            <span class="card-cat">${post.cat} • ${post.date}</span>
+            <h3 class="card-title">${post.title}</h3>
+            <p style="opacity: 0.7; font-size: 0.9rem;">
+                ${isLink ? 'External document linked.' : post.data.substring(0, 90) + '...'}
+            </p>
+            <a href="${isLink ? post.data : '#'}"
+               class="card-link"
+               target="${isLink ? '_blank' : '_self'}">
+                ${isLink ? 'OPEN DOCUMENT →' : 'READ BRIEFING →'}
+            </a>
+            ${deleteBtn}
+        `;
+
+        grid.appendChild(card);
+    });
+}
+
+// VAULT CONTROLS
+function openVault() {
+    document.getElementById('vault-overlay').style.display = 'flex';
+    document.getElementById('step-auth').classList.add('active');
+    document.getElementById('step-publish').classList.remove('active');
+    document.getElementById('vault-pass').value = '';
+}
+
+function closeVault() {
+    document.getElementById('vault-overlay').style.display = 'none';
+}
+
+function verifyPass() {
+    const pass = document.getElementById('vault-pass').value;
+
+    if (pass === VAULT_CODE) {
+        isAdmin = true;                 // 🔐 ADMIN AUTHORIZED
+        document.getElementById('step-auth').classList.remove('active');
+        document.getElementById('step-publish').classList.add('active');
+        document.getElementById('auth-error').style.display = 'none';
+        renderInsights();               // re-render with admin privileges
+    } else {
+        document.getElementById('auth-error').style.display = 'block';
+        gsap.from("#auth-error", { x: 10, repeat: 3, yoyo: true, duration: 0.1 });
+    }
+}
+
+// EXTRA SAFETY — BLOCK MANUAL DELETE ATTEMPTS
+function deleteEntry(index) {
+    if (!isAdmin) {
+        alert("Unauthorized action.");
+        return;
+    }
+
+    if (confirm("Authorized Request: Confirm deletion of this legal record?")) {
+        legalInsights.splice(index, 1);
+        localStorage.setItem('nest_insights', JSON.stringify(legalInsights));
+        renderInsights();
+    }
+}
+
+        // Add this inside your <script> tag
+const adminBtn = document.querySelector('.admin-trigger');
+
+adminBtn.addEventListener('mousemove', (e) => {
+    const rect = adminBtn.getBoundingClientRect();
+    const x = e.clientX - rect.left - rect.width / 2;
+    const y = e.clientY - rect.top - rect.height / 2;
+
+    // Moves the button slightly toward the mouse
+    gsap.to(adminBtn, {
+        x: x * 0.3,
+        y: y * 0.3,
+        duration: 0.3,
+        ease: "power2.out"
+    });
+});
+
+adminBtn.addEventListener('mouseleave', () => {
+    // Snaps the button back to center
+    gsap.to(adminBtn, {
+        x: 0,
+        y: 0,
+        duration: 0.5,
+        ease: "elastic.out(1, 0.3)"
+    });
+});
+
+        // FORM HANDLING
+        document.getElementById('insight-form').onsubmit = (e) => {
+            e.preventDefault();
+            const date = new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit' }).toUpperCase();
+            
+            const newEntry = {
+                title: document.getElementById('post-title').value,
+                cat: document.getElementById('post-cat').value,
+                data: document.getElementById('post-data').value,
+                date: date
+            };
+
+            legalInsights.unshift(newEntry);
+            localStorage.setItem('nest_insights', JSON.stringify(legalInsights));
+            renderInsights();
+            closeVault();
+            document.getElementById('insight-form').reset();
+        };
+
+        function deleteEntry(index) {
+            if(confirm("Authorized Request: Confirm deletion of this legal record?")) {
+                legalInsights.splice(index, 1);
+                localStorage.setItem('nest_insights', JSON.stringify(legalInsights));
+                renderInsights();
+            }
+        }
+
+        // INITIALIZE
+        renderInsights();
+
+        /* ===== Gallery Lightbox ===== */
+
+const galleryImages = document.querySelectorAll(".gallery-grid img");
+const lightbox = document.getElementById("lightbox");
+const lightboxImg = document.getElementById("lightbox-img");
+const closeLightbox = document.getElementById("close-lightbox");
+
+galleryImages.forEach(img => {
+  img.addEventListener("click", () => {
+    lightbox.style.display = "flex";
+    lightboxImg.src = img.src;
+  });
+});
+
+closeLightbox.addEventListener("click", () => {
+  lightbox.style.display = "none";
+});
+
+lightbox.addEventListener("click", e => {
+  if (e.target === lightbox) {
+    lightbox.style.display = "none";
+  }
+});
+
+// Auto year update
+document.getElementById("year").textContent = new Date().getFullYear();
+
+    </script>
+
+
+<footer class="site-footer">
+  <div class="footer-container">
+
+    <!-- Brand & Address -->
+    <div class="footer-block">
+      <h3 class="footer-logo">NESTLEGAL</h3>
+      <p class="footer-text">
+        r93x, 37, Barrackpore – Kalyani Expy,<br>
+        Babanpur, Jafarpur,<br>
+        West Bengal 743122, India
+      </p>
+    </div>
+
+    <!-- Contact Info -->
+    <div class="footer-block">
+      <h4>Contact</h4>
+      <p class="footer-text">
+        Phone: <a href="tel:+919593719111">+91 95937 19111</a>
+      </p>
+    </div>
+
+    <!-- WhatsApp CTA -->
+    <div class="footer-block">
+      <a href="https://wa.me/919593719111"
+         target="_blank"
+         class="whatsapp-btn">
+        Chat on WhatsApp
+      </a>
+    </div>
+
+  </div>
+
+  <div class="footer-bottom">
+    © <span id="year"></span> NestLegal. All Rights Reserved.
+  </div>
+</footer>
+
+<!-- Floating WhatsApp Button -->
+<a href="https://wa.me/919593719111"
+   class="floating-whatsapp"
+   target="_blank"
+   aria-label="Chat on WhatsApp">
+  <span class="wa-icon">💬</span>
+</a>
+
+
+</body>
+</html>
